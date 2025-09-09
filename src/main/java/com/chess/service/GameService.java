@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class GameService {
+public class GameService implements IGameService {
     private Match match = new Match();
 
     public boolean move(int fromRow, int fromCol, int toRow, int toCol) {

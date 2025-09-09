@@ -7,7 +7,7 @@ import com.chess.api.dto.MoveResponse;
 import com.chess.api.dto.SquareDTO;
 import com.chess.model.Move;
 import com.chess.model.Piece;
-import com.chess.service.GameService;
+import com.chess.service.IGameService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -17,15 +17,15 @@ import java.util.List;
 @RequestMapping("/api/chess")
 public class ChessController {
 
-    private final GameService gameService;
+    private final IGameService IGameService;
 
-    public ChessController(GameService gameService) {
-        this.gameService = gameService;
+    public ChessController(IGameService IGameService) {
+        this.IGameService = IGameService;
     }
 
     @GetMapping("/board")
     public BoardDTO getBoard() {
-        Piece[][] grid = gameService.getBoardState();
+        Piece[][] grid = IGameService.getBoardState();
         List<SquareDTO> squares = new ArrayList<>(64);
         for (int r = 0; r < grid.length; r++) {
             for (int c = 0; c < grid[r].length; c++) {
@@ -42,24 +42,24 @@ public class ChessController {
 
     @PostMapping("/move")
     public MoveResponse movePiece(@RequestBody MoveRequest req) {
-        gameService.move(req.getFromRow(), req.getFromCol(), req.getToRow(), req.getToCol());
+        IGameService.move(req.getFromRow(), req.getFromCol(), req.getToRow(), req.getToCol());
         return new MoveResponse(
                 "success",
                 "Move completed successfully.",
-                gameService.getCurrentPlayer(),
-                gameService.isGameOver(),
-                gameService.getWinner()
+                IGameService.getCurrentPlayer(),
+                IGameService.isGameOver(),
+                IGameService.getWinner()
         );
     }
 
     @GetMapping("/history")
     public List<String> getMoveHistory() {
-        return gameService.getMoveHistory().stream().map(Move::getNotation).toList();
+        return IGameService.getMoveHistory().stream().map(Move::getNotation).toList();
     }
 
     @PostMapping("/reset")
     public String resetGame() {
-        gameService.resetMatch();
+        IGameService.resetMatch();
         return "Game reset successfully.";
     }
 }
